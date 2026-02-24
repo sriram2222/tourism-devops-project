@@ -1,0 +1,12 @@
+{
+  "name": "tourism-project",
+  "version": "1.0.0",
+  "scripts": {
+    "backend": "cd Backend && python run.py",
+    "frontend": "cd Frontend && npm run dev",
+    "start": "concurrently \"npm run backend\" \"npm run frontend\""
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
