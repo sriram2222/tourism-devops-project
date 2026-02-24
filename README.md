@@ -146,19 +146,24 @@ Recommended size: **1920×1080px JPG** for hero, **1400×800px** for banners
 
 The site uses a beautiful color gradient as fallback if images are not present.
 
-### Place Images (via Admin Panel)
+### 🔒 Admin Panel (Restricted Access)
 
-1. Go to http://localhost:3000/admin/login
-2. Login: `admin` / `Admin@123`
-3. Click "All Places" → "Edit" on any place
-4. Upload an image using the upload box
-5. The image appears instantly on the site
+1. Open: http://localhost:3000/admin/login
+2. Login using **secure admin credentials (only project owner)**
+3. After login → go to **Admin Dashboard**
+4. Manage places, gallery images and content
+5. Uploaded images reflect instantly on website
+
+⚠️ **Security Note:**
+Admin credentials are **private** and accessible only to the project owner.
+Public users cannot access or modify admin data.
 
 ### Gallery Images
 
 1. In Admin Panel, click "Gallery"
 2. Choose a file, add title and tag
 3. Click "Upload Image"
+4. Done by admin alone
 
 ---
 
@@ -172,11 +177,6 @@ The site uses a beautiful color gradient as fallback if images are not present.
 | Edit Place | Pre-filled form, update any field |
 | Gallery Manager | Upload/delete gallery images |
 | Dark Mode | Toggle in navbar |
-
-URL: http://localhost:3000/admin/login
-Credentials: **admin** / **Admin@123**
-
-⚠️ **Change the password after first login!** (Change Password in admin settings)
 
 ---
 
@@ -262,21 +262,6 @@ kill $(lsof -t -i:5000)
 **CORS errors:**
 - Ensure backend is running on port 5000
 - Ensure `FRONTEND_URL=http://localhost:3000` in `backend/.env`
-
----
-
-## 🚀 Next Steps (Future Improvements)
-
-- [ ] Docker + docker-compose setup
-- [ ] CI/CD with GitHub Actions
-- [ ] AWS deployment (EC2 + RDS + S3 + CloudFront)
-- [ ] Nginx reverse proxy config
-- [ ] SSL with Let's Encrypt
-- [ ] SEO optimization + sitemap.xml
-- [ ] Multi-image upload per place
-- [ ] Image compression/resize on upload
-- [ ] User reviews and ratings
-- [ ] Contact form with email
 
 ---
 
