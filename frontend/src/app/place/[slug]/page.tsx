@@ -50,7 +50,7 @@ export default function PlaceDetailPage() {
     <>
       {/* Hero */}
       <div className="relative h-[85vh] md:h-[95vh] min-h-[650px]">
-        <div className="absolute inset-0 bg-black/55 z-10" />
+        <div className="absolute inset-0 bg-black/25 z-10" />
 
         {hasImages ? (
           <div className="absolute inset-0">
@@ -64,7 +64,7 @@ export default function PlaceDetailPage() {
             />
             <div
               className="absolute inset-0 z-10"
-              style={{ background: "linear-gradient(to top, rgba(5,15,5,0.85) 0%, transparent 60%)" }}
+              style={{ background: "linear-gradient(to top, rgba(5,15,5,0.45) 0%, transparent 60%)" }}
             />
           </div>
         ) : (

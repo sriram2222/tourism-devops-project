@@ -1,3 +1,5 @@
+from fileinput import filename
+
 from flask import Flask, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
@@ -9,6 +11,7 @@ jwt = JWTManager()
 
 def create_app():
     app = Flask(__name__)
+    app.config["UPLOAD_FOLDER"] = "/app/uploads"
     app.config.from_object("app.config.Config")
 
     os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
@@ -47,9 +50,9 @@ def create_app():
     def health():
         return {"status":"ok","service":"tourism-api"}
 
-    # IMAGE SERVE
+        # IMAGE SERVE
     @app.route('/api/uploads/<path:filename>')
     def uploaded_file(filename):
-        return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+        return send_from_directory("/app/uploads", filename)
 
     return app
