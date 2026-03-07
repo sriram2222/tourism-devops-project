@@ -4,3 +4,14 @@ node_modules/
 dist
 build
 
+# Archives
+*.zip
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+
+# SSH keys
+*.pem
+*.ppk
