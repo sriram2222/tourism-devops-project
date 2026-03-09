@@ -6,6 +6,7 @@ import Image from "next/image";
 import { placesApi, galleryApi, uploadApi } from "@/lib/api";
 import { Place } from "@/types";
 import { getImageUrl, slugify } from "@/lib/utils";
+import api from "@/lib/api";
 
 type Tab = "dashboard" | "places" | "gallery" | "add" | "bookings";
 const CATEGORIES = ["nature","temple","waterfall","dam","viewpoint","market","other"];
@@ -59,22 +60,22 @@ export default function AdminDashboard() {
 
  async function fetchAll() {
   setLoading(true);
+
   try {
     const [p, g, b] = await Promise.all([
       placesApi.getAll(),
       galleryApi.getAll(),
-      fetch("http://127.0.0.1:5000/api/admin/bookings")
+      api.get("/admin/bookings")
     ]);
 
-    const bookingsData = await b.json();
+    const bookingsData = b.data;
 
     setPlaces(p.data);
     setGallery(g.data);
 
-    // ✅ ADD THESE HERE
-    setBookings(bookingsData.bookings);
-    setTotalRevenue(bookingsData.total_revenue);
-    setTotalBookings(bookingsData.total_bookings);
+    setBookings(bookingsData.bookings || []);
+    setTotalRevenue(bookingsData.total_revenue || 0);
+    setTotalBookings(bookingsData.total_bookings || 0);
 
   } catch (err) {
     console.log("Fetch error:", err);
@@ -689,9 +690,7 @@ export default function AdminDashboard() {
                   <button
                     onClick={async () => {
                       if (!confirm("Cancel this booking?")) return;
-                      await fetch(`http://127.0.0.1:5000/api/bookings/${b.id}`, {
-                        method: "DELETE"
-                      });
+                      await api.delete(`/bookings/${b.id}`);
                       fetchAll();
                     }}
                     className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-50 text-red-600 hover:bg-red-100 border border-red-100"

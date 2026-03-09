@@ -1,0 +1,9 @@
+@"
+venv/
+.venv/
+__pycache__/
+*.pyc
+.env
+uploads/
+your_database.db
+"@ | Out-File -FilePath "E:\PP\tourism-app\backend\.dockerignore" -Encoding utf8

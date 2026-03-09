@@ -21,8 +21,8 @@ services:
 
   backend:
     build:
-      context: .
-      dockerfile: docker/backend.Dockerfile
+      context: ./backend
+      dockerfile: ../docker/backend.Dockerfile
     container_name: tourism-backend
     restart: always
     ports:

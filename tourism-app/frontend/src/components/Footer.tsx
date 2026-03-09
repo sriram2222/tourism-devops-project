@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FaInstagram, FaLinkedin, FaGithub, FaXTwitter } from "react-icons/fa6";
 
 export default function Footer() {
-return ( <footer className="relative bg-[#061106] text-white px-4 md:px-[5%] pt-20 pb-10 overflow-hidden">
+return ( <footer className="relative bg-[#061106] text-white px-4 md:px-[5%] pt-20 pb-14 overflow-hidden">
 
 
   {/* Glow background */}

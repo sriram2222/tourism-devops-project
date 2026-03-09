@@ -12,17 +12,26 @@ export default function MyBookings() {
   const [mounted, setMounted]       = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    setMounted(true);
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) { router.push("/login"); return; }
-    const user = JSON.parse(storedUser);
-    fetch(`http://localhost:5000/api/my-booking/${user.id}`)
-      .then(res => res.json())
-      .then(data => setBookings(Array.isArray(data) ? data : []))
-      .catch(() => setBookings([]))
-      .finally(() => setLoading(false));
-  }, []);
+useEffect(() => {
+  setMounted(true);
+
+  const storedUser = localStorage.getItem("user");
+
+  if (!storedUser) {
+    router.push("/login");
+    return;
+  }
+
+  const token = localStorage.getItem("tourism_token");
+  fetch(`http://localhost:5000/api/my-booking`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then(res => res.json())
+    .then(data => setBookings(Array.isArray(data) ? data : []))
+    .catch(() => setBookings([]))
+    .finally(() => setLoading(false));
+
+}, []);
 
   const deleteBooking = async (id: number) => {
     setDeletingId(id);
@@ -294,3 +303,4 @@ export default function MyBookings() {
     </div>
   );
 }
+

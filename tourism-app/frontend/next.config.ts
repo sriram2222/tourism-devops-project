@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",   // ⭐ add this
+
   images: {
     remotePatterns: [
       { protocol: "http", hostname: "localhost" },

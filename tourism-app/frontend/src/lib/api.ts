@@ -61,4 +61,10 @@ export const uploadApi = {
   deleteImage: (imageId: number) => api.delete(`/upload/image/${imageId}`),
 };
 
+export const bookingApi = {
+  create: (data: Record<string, unknown>) => api.post("/bookings", data),
+  getMyBookings: () => api.get("/bookings/my"),
+  cancel: (id: number) => api.delete(`/bookings/${id}`)
+};
+
 export default api;

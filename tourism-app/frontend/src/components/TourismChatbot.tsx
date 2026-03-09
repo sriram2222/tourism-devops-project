@@ -201,7 +201,7 @@ export default function TourismChatbot() {
       {/* Floating Button */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="fixed bottom-6 right-6 z-[9999] w-[58px] h-[58px] rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95"
+        className="fixed bottom-8 right-8 z-[9999] w-[58px] h-[58px] rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95"
         style={{ background: "linear-gradient(135deg, #0c3d1a, #1a6b30)" }}
       >
         <span className={`transition-all duration-300 ${open ? "rotate-90 scale-90" : "rotate-0 scale-100"}`}>
@@ -216,8 +216,14 @@ export default function TourismChatbot() {
       {/* Chat Window */}
       {open && (
         <div
-          className="fixed bottom-[88px] right-6 z-[9998] flex flex-col rounded-2xl overflow-hidden shadow-2xl"
-          style={{ width: "360px", height: "min(560px, calc(100vh - 110px))", maxHeight: "calc(100vh - 110px)", border: "1px solid rgba(0,0,0,0.1)", animation: "slideUp 0.25s ease-out" }}
+          className="fixed bottom-[96px] right-8 z-[9998] flex flex-col rounded-2xl overflow-hidden shadow-2xl"
+        style={{
+        width: "min(360px, calc(100vw - 32px))",
+        height: "min(560px, calc(100vh - 120px))",
+        maxHeight: "calc(100vh - 120px)",
+        border: "1px solid rgba(0,0,0,0.1)",
+        animation: "slideUp 0.35s cubic-bezier(.22,.61,.36,1)"
+      }}
         >
           <style>{`
             @keyframes slideUp { from { opacity:0; transform:translateY(16px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
@@ -283,7 +289,7 @@ export default function TourismChatbot() {
                 <div className="bg-white px-4 py-3 shadow-sm flex gap-1.5 items-center"
                   style={{ borderRadius: "4px 18px 18px 18px", border: "1px solid rgba(0,0,0,0.06)" }}>
                   {[0,1,2].map(j => (
-                    <span key={j} className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-bounce"
+                    <span key={j} className="w-1.5 h-1.5 rounded-full bg-gray-400 animate-pulse"
                       style={{ animationDelay: `${j*0.15}s` }}/>
                   ))}
                 </div>

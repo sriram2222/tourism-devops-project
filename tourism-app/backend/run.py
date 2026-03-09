@@ -2,10 +2,18 @@ from app import create_app, db
 from app.models import AdminUser, Region, Place, User, Booking
 import bcrypt
 from flask import request, jsonify
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    jwt_required,
+    get_jwt_identity
+)
 
 
 # ✅ No CORS here — it's already handled in create_app() / __init__.py
 app = create_app()
+app.config["JWT_SECRET_KEY"] = "super-secret-key"
+jwt = JWTManager(app)
 
 # ---------------- SEED FUNCTION ----------------
 def seed():
@@ -84,20 +92,29 @@ def signup():
 @app.route("/api/login", methods=["POST"])
 def login():
     try:
-        data     = request.get_json(force=True)
-        email    = data.get("email")
+        data = request.get_json(force=True)
+        email = data.get("email")
         password = data.get("password")
 
         if not email or not password:
             return jsonify({"error": "Email and password required"}), 400
 
         user = User.query.filter_by(email=email).first()
+
         if not user:
             return jsonify({"error": "Invalid email or password"}), 401
+
         if not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
             return jsonify({"error": "Invalid email or password"}), 401
 
-        return jsonify({"message": "Login successful", "user": user.to_dict()}), 200
+        token = create_access_token(identity=user.id)
+
+        return jsonify({
+            "message": "Login successful",
+            "token": token,
+            "user": user.to_dict()
+        }), 200
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -155,8 +172,11 @@ def book_hotel():
 
 # ---------------- ADMIN VIEW ALL BOOKINGS (ULTRA PRO) ----------------
 @app.route("/api/admin/bookings", methods=["GET"])
+@jwt_required()
 def admin_all_bookings():
     try:
+
+
         bookings = db.session.query(Booking, User).join(
             User, Booking.user_id == User.id
         ).order_by(Booking.created_at.desc()).all()
@@ -192,6 +212,36 @@ def admin_all_bookings():
         print("❌ Admin booking error:", str(e))
         return jsonify({"error": str(e)}), 500
     
+   # ---------------- GET USER BOOKINGS ----------------
+@app.route("/api/my-booking", methods=["GET"])
+@jwt_required()
+def get_user_bookings():
+    try:
+        user_id = get_jwt_identity()
+        bookings = Booking.query.filter_by(user_id=user_id)\
+            .order_by(Booking.created_at.desc()).all()
+
+        result = []
+        for b in bookings:
+            result.append({
+                "id": b.id,
+                "hotel_name": b.hotel_name,
+                "location": b.location,
+                "room_type": b.room_type,
+                "check_in": str(b.check_in),
+                "check_out": str(b.check_out),
+                "guests": b.guests,
+                "total_price": b.total_price,
+                "booking_ref": b.booking_ref,
+                "created_at": str(b.created_at)
+            })
+
+        return jsonify(result), 200
+
+    except Exception as e:
+        print("❌ Fetch bookings error:", str(e))
+        return jsonify({"error": str(e)}), 500
+    
 # Add this route to your app.py
 
 # ---------------- DELETE BOOKING ----------------
@@ -219,3 +269,4 @@ if __name__ == "__main__":
         seed()
 
     app.run(host="0.0.0.0", port=5000, debug=True)
+
