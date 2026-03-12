@@ -28,7 +28,7 @@ export default function Signup() {
   const handleSignup = async (e: any) => {
     e.preventDefault();
 
-   const res = await fetch("/api/google-login", {
+    const res = await fetch("/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form)
@@ -42,6 +42,7 @@ export default function Signup() {
     } else {
       alert(data.error);
     }
+  };
 
   const handleGoogleSignup = async () => {
     try {
