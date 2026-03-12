@@ -11,7 +11,7 @@ export function getImageUrl(path: string | null | undefined): string {
   // if already full URL
   if (path.startsWith("http")) return path;
 
-  const base = "http://localhost:5000";
+  const base = "";
 
   // if backend already sending /api/uploads/...
   if (path.startsWith("/api/uploads")) {

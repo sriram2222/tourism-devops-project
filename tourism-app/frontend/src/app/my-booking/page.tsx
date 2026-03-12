@@ -23,7 +23,7 @@ useEffect(() => {
   }
 
   const token = localStorage.getItem("tourism_token");
-  fetch(`http://localhost:5000/api/my-booking`, {
+  fetch(`/api/my-booking`, {
     headers: { Authorization: `Bearer ${token}` }
   })
     .then(res => res.json())
@@ -36,7 +36,7 @@ useEffect(() => {
   const deleteBooking = async (id: number) => {
     setDeletingId(id);
     try {
-      const res = await fetch(`http://localhost:5000/api/bookings/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/bookings/${id}`, { method: "DELETE" });
       if (res.ok) {
         setBookings(prev => prev.filter(b => b.id !== id));
       } else {
