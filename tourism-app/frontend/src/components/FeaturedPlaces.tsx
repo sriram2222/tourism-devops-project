@@ -15,7 +15,7 @@ export default function FeaturedPlaces() {
 
   useEffect(() => {
     placesApi.getAll({ featured: "true" })
-      .then(r => setPlaces(r.data))
+      .then(r => setPlaces(r))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
