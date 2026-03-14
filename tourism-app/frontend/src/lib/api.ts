@@ -1,10 +1,6 @@
 import axios from "axios";
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL ||
-  (process.env.NODE_ENV === "development"
-    ? "http://localhost:5000/api"
-    : "/api");
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 const api = axios.create({ baseURL: API_BASE });
 
@@ -63,12 +59,6 @@ export const uploadApi = {
     });
   },
   deleteImage: (imageId: number) => api.delete(`/upload/image/${imageId}`),
-};
-
-export const bookingApi = {
-  create: (data: Record<string, unknown>) => api.post("/bookings", data),
-  getMyBookings: () => api.get("/bookings/my"),
-  cancel: (id: number) => api.delete(`/bookings/${id}`)
 };
 
 export default api;

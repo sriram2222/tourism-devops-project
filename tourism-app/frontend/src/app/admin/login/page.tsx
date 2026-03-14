@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authApi } from "@/lib/api";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -10,8 +11,8 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  // ✅ STATIC IMAGE ONLY (PALANI)
   const backgroundImage = "/images/bg/palani.jpg";
 
   async function handleLogin(e: React.FormEvent) {
@@ -34,22 +35,15 @@ export default function AdminLogin() {
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
 
-      {/* Background image */}
-      <img 
+      <img
         src={backgroundImage}
         className="absolute inset-0 w-full h-full object-cover"
       />
-
-      {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/60"></div>
-
-      {/* Premium moving light effect */}
       <div className="absolute inset-0 premiumLight pointer-events-none"></div>
 
-      {/* Card */}
       <div className="relative z-10 w-full max-w-sm mx-4 p-6 rounded-2xl bg-white/95 shadow-2xl">
 
-        {/* Logo + title */}
         <div className="text-center mb-5">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-800 to-green-600 flex items-center justify-center text-2xl mx-auto mb-3">
             🌿
@@ -78,14 +72,24 @@ export default function AdminLogin() {
             <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">
               Password
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-              className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50"
-            />
+            {/* ✅ Password with eye toggle */}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                className="w-full px-3 py-2.5 pr-10 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 bg-gray-50"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+              </button>
+            </div>
           </div>
 
           {error && (

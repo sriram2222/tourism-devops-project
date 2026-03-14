@@ -19,13 +19,31 @@ export default function Profile() {
     setForm({ name: u.name || "", phone: u.phone || "", address: u.address || "" });
   }, []);
 
-  function handleSave() {
-    const updated = { ...user, ...form };
-    localStorage.setItem("user", JSON.stringify(updated));
-    setUser(updated);
-    setEditing(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+ async function handleSave() {
+    try {
+      const token = localStorage.getItem("tourism_token");
+      const res = await fetch("http://localhost:5000/api/update-profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(form)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        const updated = { ...user, ...form };
+        localStorage.setItem("user", JSON.stringify(updated));
+        setUser(updated);
+        setEditing(false);
+        setSaved(true);
+        setTimeout(() => setSaved(false), 3000);
+      } else {
+        alert(data.error || "Failed to update profile");
+      }
+    } catch (err) {
+      alert("Server error");
+    }
   }
 
   if (!user) return (

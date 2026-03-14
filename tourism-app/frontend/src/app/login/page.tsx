@@ -5,37 +5,36 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { auth, provider } from "@/lib/firebase";
 import { signInWithPopup } from "firebase/auth";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Login() {
 
   const router = useRouter();
+  const backgroundImage = "/images/bg/pollachi.jpeg";
 
-  // ✅ ONLY ONE BACKGROUND (NO CHANGE)
-  const backgroundImage = "/images/bg/pollachi.jpeg"; // keep coconut image
-
-  const [form, setForm] = useState({
-    email: "",
-    password: ""
-  });
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPhonePopup, setShowPhonePopup] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [savingPhone, setSavingPhone] = useState(false);
+  const [googleToken, setGoogleToken] = useState("");
 
   const handleChange = (e: any) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ---------------- LOGIN ----------------
   const handleLogin = async (e: any) => {
     e.preventDefault();
-
-    const res = await fetch("/api/login", {
+    const res = await fetch("http://localhost:5000/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form)
     });
-
     const data = await res.json();
-
     if (res.ok) {
+      localStorage.clear();
       localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("tourism_token", data.token);
       alert("Login successful 🚀");
       router.push("/");
     } else {
@@ -43,13 +42,11 @@ export default function Login() {
     }
   };
 
-  // ---------------- GOOGLE LOGIN ----------------
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
-      const res = await fetch("http://127.0.0.1:5000/google-login", {
+      const res = await fetch("http://localhost:5000/google-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -57,32 +54,93 @@ export default function Login() {
           email: user.email
         })
       });
-
       const data = await res.json();
+      localStorage.clear();
       localStorage.setItem("user", JSON.stringify(data.user));
-      alert("Google login successful 🚀");
-      router.push("/");
+      localStorage.setItem("tourism_token", data.token);
+
+      if (!data.user.phone) {
+        setGoogleToken(data.token);
+        setShowPhonePopup(true);
+      } else {
+        alert("Google login successful 🚀");
+        router.push("/");
+      }
     } catch (error: any) {
       alert("Google login failed");
+    }
+  };
+
+  const handleSavePhone = async () => {
+    if (!phone) { alert("Please enter phone number"); return; }
+    setSavingPhone(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/update-profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${googleToken}`
+        },
+        body: JSON.stringify({ phone })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+        storedUser.phone = phone;
+        localStorage.setItem("user", JSON.stringify(storedUser));
+        setShowPhonePopup(false);
+        alert("Google login successful 🚀");
+        router.push("/");
+      } else {
+        alert(data.error || "Failed to save phone");
+      }
+    } catch {
+      alert("Server error");
+    } finally {
+      setSavingPhone(false);
     }
   };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
 
-      {/* Background image */}
-      <img 
-        src={backgroundImage}
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-
-      {/* Dark overlay */}
+      <img src={backgroundImage} className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0 bg-black/60"></div>
-
-      {/* ✨ PREMIUM MOVING LIGHT EFFECT */}
       <div className="absolute inset-0 premiumLight pointer-events-none"></div>
 
-      {/* Login Card */}
+      {/* ✅ Phone Number Popup */}
+      {showPhonePopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-2xl p-7 w-full max-w-sm shadow-2xl">
+            <div className="text-4xl text-center mb-3">📱</div>
+            <h3 className="text-xl font-bold text-center text-gray-800 mb-1">One Last Step!</h3>
+            <p className="text-center text-gray-400 text-sm mb-5">
+              Please add your phone number to complete your profile
+            </p>
+            <input
+              type="tel"
+              placeholder="+91 XXXXX XXXXX"
+              value={phone}
+              onChange={e => setPhone(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 mb-3"
+            />
+            <button
+              onClick={handleSavePhone}
+              disabled={savingPhone}
+              className="w-full py-3 bg-green-700 hover:bg-green-800 text-white rounded-xl font-semibold text-sm transition disabled:opacity-60"
+            >
+              {savingPhone ? "Saving..." : "Save & Continue →"}
+            </button>
+            <button
+              onClick={() => { setShowPhonePopup(false); router.push("/"); }}
+              className="w-full py-2.5 mt-2 text-gray-400 text-sm hover:text-gray-600 transition"
+            >
+              Skip for now
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="relative z-10 w-full max-w-sm mx-4 p-7 rounded-2xl bg-white/95 shadow-2xl backdrop-blur">
 
         <h2 className="text-2xl font-bold text-center mb-1 text-gray-800">
@@ -103,14 +161,24 @@ export default function Login() {
             required
           />
 
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            onChange={handleChange}
-            className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-            required
-          />
+          {/* ✅ Password with eye toggle */}
+          <div className="relative">
+            <input
+              name="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              onChange={handleChange}
+              className="w-full px-3 py-2.5 pr-10 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+            </button>
+          </div>
 
           <div className="text-right">
             <Link href="/forgot-password" className="text-xs text-green-700 hover:underline">
@@ -131,7 +199,6 @@ export default function Login() {
             <div className="flex-1 h-px bg-gray-200"></div>
           </div>
 
-          {/* Google */}
           <button
             type="button"
             onClick={handleGoogleLogin}
