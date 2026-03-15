@@ -22,7 +22,7 @@ export default function Profile() {
  async function handleSave() {
     try {
       const token = localStorage.getItem("tourism_token");
-      const res = await fetch("http://localhost:5000/api/update-profile", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/update-profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -412,7 +412,7 @@ export default function AdminDashboard() {
                               <div className="flex -space-x-1">
                                 {p.images.slice(0,3).map((img: any, i: number) => (
                                   <div key={i} className="w-5 h-5 rounded-full overflow-hidden border border-white ring-1 ring-gray-100">
-                                    <img src={`http://127.0.0.1:5000${img.url}`} className="w-full h-full object-cover" />
+                                    <img src={getImageUrl(img.url)} className="w-full h-full object-cover" />
                                   </div>
                                 ))}
                               </div>
@@ -578,10 +578,10 @@ export default function AdminDashboard() {
                       <div className="flex gap-3 flex-wrap">
                         {places.find(p => p.id === editId)?.images.map((img: any) => (
                           <div key={img.id} className="relative w-24 h-24 rounded-xl overflow-hidden ring-1 ring-gray-100 shadow-sm group">
-                            <img src={`http://127.0.0.1:5000${img.url}`} className="w-full h-full object-cover" />
+                            <img src={getImageUrl(img.url)} className="w-full h-full object-cover" />
                             <button type="button" onClick={async () => {
                               if (!confirm("Delete image?")) return;
-                              await fetch(`http://127.0.0.1:5000/api/upload/delete-image/${img.id}`, { method: "DELETE" });
+                              await api.delete(`/upload/delete-image/${img.id}`);
                               showToast("Deleted!"); fetchAll();
                             }} className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">×</button>
                           </div>

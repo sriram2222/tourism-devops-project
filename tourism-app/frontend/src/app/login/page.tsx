@@ -25,7 +25,7 @@ export default function Login() {
 
   const handleLogin = async (e: any) => {
     e.preventDefault();
-    const res = await fetch("http://localhost:5000/api/login", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form)
@@ -46,7 +46,7 @@ export default function Login() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      const res = await fetch("http://localhost:5000/google-login", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/google-login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -75,7 +75,7 @@ export default function Login() {
     if (!phone) { alert("Please enter phone number"); return; }
     setSavingPhone(true);
     try {
-      const res = await fetch("http://localhost:5000/api/update-profile", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/update-profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -1,3 +1,6 @@
+import email
+import token
+
 from app import create_app, db
 from app.models import AdminUser, Region, Place, User, Booking
 import bcrypt
@@ -176,7 +179,8 @@ def forgot_password():
         token = secrets.token_urlsafe(32)
         reset_tokens[email] = token
 
-        reset_link = f"http://localhost:3000/reset-password?token={token}&email={email}"
+        # ✅ Replace with
+        reset_link = f"http://52.66.242.219/reset-password?token={token}&email={email}"
 
         msg = Message(
             subject="PP Explorer — Password Reset",
