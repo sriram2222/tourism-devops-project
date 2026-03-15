@@ -13,7 +13,8 @@ backend/__pycache__
 *.pyc
 
 .env
-.env.*
+.env.local
+.env.development
 
 *.log
 *.zip
