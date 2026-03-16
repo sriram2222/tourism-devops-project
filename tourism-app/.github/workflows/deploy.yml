@@ -22,12 +22,13 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # 🟢 Build Frontend
+   # 🟢 Build Frontend
     - name: Build Frontend Image
       run: |
-        docker build -t sriram2204/tourism-app-frontend:latest \
-                     -t sriram2204/tourism-app-frontend:${TAG} \
-                     -f Docker/frontend.Dockerfile ./frontend
+       docker build -t sriram2204/tourism-app-frontend:latest \
+                 -t sriram2224/tourism-app-frontend:${TAG} \
+                 --build-arg NEXT_PUBLIC_API_URL=/api \
+                 -f Docker/frontend.Dockerfile ./frontend
 
     # 🟢 Build Backend
     - name: Build Backend Image
