@@ -22,27 +22,28 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # 🟢 Build Frontend
+    # Build Frontend
     - name: Build Frontend Image
       run: |
         docker build -t sriram2204/tourism-app-frontend:latest \
                      -t sriram2204/tourism-app-frontend:${TAG} \
-                     -f Docker/frontend.Dockerfile ./frontend
+                     --build-arg NEXT_PUBLIC_API_URL=/api \
+                     -f tourism-app/Docker/frontend.Dockerfile ./tourism-app/frontend
 
-    # 🟢 Build Backend
+    # Build Backend
     - name: Build Backend Image
       run: |
         docker build -t sriram2204/tourism-app-backend:latest \
                      -t sriram2204/tourism-app-backend:${TAG} \
-                     -f Docker/backend.Dockerfile ./backend
+                     -f tourism-app/Docker/backend.Dockerfile ./tourism-app/backend
 
-    # 🟢 Push Frontend
+    # Push Frontend
     - name: Push Frontend Images
       run: |
         docker push sriram2204/tourism-app-frontend:latest
         docker push sriram2204/tourism-app-frontend:${TAG}
 
-    # 🟢 Push Backend
+    # Push Backend
     - name: Push Backend Images
       run: |
         docker push sriram2204/tourism-app-backend:latest
