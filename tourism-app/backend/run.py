@@ -5,6 +5,7 @@ from app import create_app, db
 from app.models import AdminUser, Region, Place, User, Booking
 import bcrypt
 import secrets
+from app.s3_utils import upload_file_to_s3
 from flask import request, jsonify, send_from_directory
 from flask_jwt_extended import (
     JWTManager,
@@ -136,6 +137,29 @@ def login():
         }), 200
 
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+# ---------------- S3 IMAGE UPLOAD ----------------
+@app.route("/api/upload", methods=["POST"])
+def upload_image():
+    try:
+        if "file" not in request.files:
+            return jsonify({"error": "No file provided"}), 400
+
+        file = request.files["file"]
+
+        file_url = upload_file_to_s3(file)
+
+        if not file_url:
+            return jsonify({"error": "Upload failed"}), 500
+
+        return jsonify({
+            "message": "Upload successful",
+            "url": file_url
+        }), 200
+
+    except Exception as e:
+        print("❌ Upload error:", str(e))
         return jsonify({"error": str(e)}), 500
 
 # ---------------- GOOGLE LOGIN ----------------
