@@ -5,24 +5,23 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// 🔥 FINAL IMAGE HANDLER
 export function getImageUrl(path: string | null | undefined): string {
   if (!path) return "/images/placeholder.jpg";
 
   // ✅ If already full URL (S3 / CloudFront)
   if (path.startsWith("http")) return path;
 
+  // ✅ If already has /api/uploads - return as is
+  if (path.startsWith("/api/uploads")) return path;
+
   // 🔥 CDN support (future)
   const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL;
-
   if (CDN_URL) {
     return `${CDN_URL}/${path.replace(/^\/+/, "")}`;
   }
 
-  // ⚠️ fallback (temporary for old images)
-  const base = process.env.NEXT_PUBLIC_API_URL || "";
-
-  return `${base}/api/uploads/${path.replace(/^\/+/, "")}`;
+  // ⚠️ fallback - just filename
+  return `/api/uploads/${path.replace(/^\/+/, "")}`;
 }
 
 export function slugify(text: string): string {
