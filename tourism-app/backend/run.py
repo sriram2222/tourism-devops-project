@@ -5,7 +5,7 @@ from app import create_app, db
 from app.models import AdminUser, Region, Place, User, Booking
 import bcrypt
 import secrets
-from app.s3_utils import upload_file_to_s3
+from app.utils.s3_utils import upload_file_to_s3
 from flask import request, jsonify, send_from_directory
 from flask_jwt_extended import (
     JWTManager,
