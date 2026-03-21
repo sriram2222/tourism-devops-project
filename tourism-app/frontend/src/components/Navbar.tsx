@@ -64,14 +64,14 @@ export default function Navbar() {
   const isTransparent = isTransparentPage && !scrolled;
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-[100] h-[72px] flex items-center justify-between px-[5%] transition-all duration-500
+    <nav className={`fixed top-0 left-0 right-0 z-[100] h-[72px] flex items-center justify-between px-4 md:px-[5%] transition-all duration-500 overflow-hidden
       ${!isTransparent
         ? "bg-white/70 dark:bg-[#0b0f0c]/80 backdrop-blur-xl shadow-xl dark:shadow-black/40 border-b border-white/20 dark:border-white/10"
         : "bg-transparent"}`}>
 
       {/* LOGO */}
-      <Link href="/" className="flex flex-col leading-tight">
-        <div className={`font-serif font-extrabold text-3xl md:text-4xl tracking-wide flex items-center gap-1 transition-colors
+      <Link href="/" className="flex flex-col leading-tight shrink-0">
+        <div className={`font-serif font-extrabold text-2xl md:text-4xl tracking-wide flex items-center gap-1 transition-colors
           ${isTransparent ? "text-white" : "text-[#1a2e1a] dark:text-white"}`}>
           🌿
           <span className="text-green-700">PP</span>
@@ -79,7 +79,7 @@ export default function Navbar() {
             Explorer
           </span>
         </div>
-        <span className="text-[11px] tracking-widest text-gray-400 ml-8">
+        <span className="text-[10px] md:text-[11px] tracking-widest text-gray-400 ml-7 md:ml-8">
           பொள்ளாச்சி பழனி
         </span>
       </Link>
@@ -100,13 +100,13 @@ export default function Navbar() {
       </ul>
 
       {/* Right side */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 shrink-0">
 
         {/* Theme toggle */}
         {mounted && (
           <button
             onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-            className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all hover:scale-110 text-base
+            className={`w-8 h-8 md:w-9 md:h-9 rounded-full border flex items-center justify-center transition-all hover:scale-110 text-sm md:text-base
               ${isTransparent ? "border-white/30 bg-white/10 text-white hover:bg-white/20" : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300"}`}>
             {resolvedTheme === "dark" ? "☀️" : "🌙"}
           </button>
@@ -117,7 +117,7 @@ export default function Navbar() {
           <div className="relative hidden sm:block" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all shadow-lg
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all shadow-lg
                 ${isTransparent
                   ? "bg-white/20 text-white hover:bg-white/30 border border-white/30"
                   : "bg-gradient-to-r from-green-700 to-green-500 text-white hover:from-green-800 hover:to-green-600"}`}>
@@ -149,7 +149,7 @@ export default function Navbar() {
         ) : (
           mounted && (
             <Link href="/login"
-              className="hidden sm:block px-5 py-2 bg-gradient-to-r from-green-700 to-green-500 hover:from-green-800 hover:to-green-600 text-white text-sm font-semibold rounded-full shadow-lg transition-all">
+              className="hidden sm:block px-4 py-2 bg-gradient-to-r from-green-700 to-green-500 hover:from-green-800 hover:to-green-600 text-white text-sm font-semibold rounded-full shadow-lg transition-all">
               Login
             </Link>
           )
@@ -157,7 +157,7 @@ export default function Navbar() {
 
         {/* Admin — Desktop */}
         <Link href="/admin/login"
-          className="hidden sm:block px-5 py-2 bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-white text-sm font-semibold rounded-full shadow-lg transition-all">
+          className="hidden sm:block px-4 py-2 bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-white text-sm font-semibold rounded-full shadow-lg transition-all">
           Admin
         </Link>
 
@@ -171,11 +171,10 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* ✅ Mobile menu — FIXED with Login/User/Admin */}
+      {/* Mobile menu */}
       {menuOpen && (
-        <div className="absolute top-full left-0 right-0 bg-white dark:bg-gray-900 shadow-lg md:hidden border-t border-gray-100 dark:border-gray-800">
+        <div className="absolute top-full left-0 right-0 w-screen bg-white dark:bg-gray-900 shadow-lg md:hidden border-t border-gray-100 dark:border-gray-800">
 
-          {/* Nav links */}
           {LINKS.map(l => (
             <Link key={l.href} href={l.href} onClick={() => setMenuOpen(false)}
               className={`block px-6 py-4 text-sm font-medium border-b border-gray-50 dark:border-gray-800
@@ -184,7 +183,6 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {/* ✅ User section in mobile */}
           {mounted && user ? (
             <>
               <div className="px-6 py-3 bg-green-50 dark:bg-green-900/20 border-b border-gray-100 dark:border-gray-800">
@@ -211,7 +209,6 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* Admin */}
           <Link href="/admin/login" onClick={() => setMenuOpen(false)}
             className="block px-6 py-4 text-sm font-semibold text-amber-600 hover:bg-amber-50">
             🔧 Admin Panel
