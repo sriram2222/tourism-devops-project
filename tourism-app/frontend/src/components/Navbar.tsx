@@ -50,7 +50,8 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.removeItem("user");
+    localStorage.removeItem("tourism_token");
     setUser(null);
     setDropdownOpen(false);
     setMenuOpen(false);
