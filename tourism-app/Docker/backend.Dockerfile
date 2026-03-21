@@ -7,9 +7,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app/ ./app/
 COPY run.py .
+COPY migrate_to_s3.py .
 
 ENV FLASK_APP=run.py
 ENV FLASK_RUN_HOST=0.0.0.0
+
 
 EXPOSE 5000
 

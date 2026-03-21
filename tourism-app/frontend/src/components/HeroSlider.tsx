@@ -10,7 +10,7 @@ const SLIDES = [
 {
 image: "/images/hero/palani-hero2.jpg",
 tag: "🕌 Palani Temple",
-title: "Sacred",
+title: "Arulmigu",
 titleEm: "Palani",
 titleEnd: "Temple",
 sub: "Famous Murugan temple in Tamil Nadu.",

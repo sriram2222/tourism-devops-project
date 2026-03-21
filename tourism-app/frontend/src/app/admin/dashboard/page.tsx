@@ -53,7 +53,7 @@ export default function AdminDashboard() {
   }
 
   useEffect(() => {
-    const token = localStorage.getItem("tourism_token");
+    const token = localStorage.getItem("admin_token");
     if (!token) { router.push("/admin/login"); return; }
     fetchAll();
   }, []);
@@ -248,7 +248,7 @@ export default function AdminDashboard() {
 
         {/* Logout */}
         <div className={`border-t border-white/10 ${collapsed ? "py-3 flex justify-center" : "px-4 py-4"}`}>
-          <button onClick={() => { localStorage.removeItem("tourism_token"); router.push("/admin/login"); }}
+          <button onClick={() => { localStorage.removeItem("admin_token"); router.push("/admin/login"); }}
             title={collapsed ? "Logout" : ""}
             className={`flex items-center gap-2 text-red-400/60 hover:text-red-400 transition-colors text-sm ${collapsed ? "" : "w-full"}`}>
             <span>🚪</span>

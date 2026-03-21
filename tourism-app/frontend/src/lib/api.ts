@@ -6,7 +6,11 @@ const api = axios.create({ baseURL: API_BASE });
 
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("tourism_token");
+    // Use admin_token for admin routes, tourism_token for user routes
+    const isAdminRoute = config.url?.includes("/admin/") || config.url?.includes("/auth/");
+    const token = isAdminRoute 
+      ? localStorage.getItem("admin_token") 
+      : localStorage.getItem("tourism_token");
     if (token) config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -17,7 +21,7 @@ api.interceptors.response.use(
   (err) => {
     if (err.response?.status === 401 && typeof window !== "undefined") {
       if (window.location.pathname.startsWith("/admin/dashboard")) {
-        localStorage.removeItem("tourism_token");
+        localStorage.removeItem("admin_token");
         window.location.href = "/admin/login";
       }
     }

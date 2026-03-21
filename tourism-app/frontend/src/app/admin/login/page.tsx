@@ -23,7 +23,7 @@ export default function AdminLogin() {
     try {
       const res = await authApi.login(username, password);
       console.log("LOGIN RESPONSE:", res.data);
-      localStorage.setItem("tourism_token", res.data.access_token);
+      localStorage.setItem("admin_token", res.data.access_token);
       router.push("/admin/dashboard");
     } catch {
       setError("Invalid username or password");
