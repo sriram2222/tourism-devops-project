@@ -1,6 +1,3 @@
-import email
-import token
-
 from app import create_app, db
 from app.models import AdminUser, Region, Place, User, Booking
 import bcrypt
@@ -13,20 +10,17 @@ from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity
 )
-from flask_mail import Mail, Message
+
+import boto3
+
+ses = boto3.client(
+    'ses',
+    region_name='ap-south-1'
+)
 
 app = create_app()
 app.config["JWT_SECRET_KEY"] = "super-secret-key"
 jwt = JWTManager(app)
-
-# ✅ Mail config
-app.config["MAIL_SERVER"]         = "smtp.gmail.com"
-app.config["MAIL_PORT"]           = 587
-app.config["MAIL_USE_TLS"]        = True
-app.config["MAIL_USERNAME"]       = "raamlakshmanan22@gmail.com"
-app.config["MAIL_PASSWORD"]       = "vhii cosz qydm jwjc"
-app.config["MAIL_DEFAULT_SENDER"] = "raamlakshmanan22@gmail.com"
-mail = Mail(app)
 
 # Temporary reset token storage
 reset_tokens = {}
@@ -203,80 +197,42 @@ def forgot_password():
         token = secrets.token_urlsafe(32)
         reset_tokens[email] = token
 
-        # ✅ Replace with
         reset_link = f"http://52.66.242.219/reset-password?token={token}&email={email}"
 
-        msg = Message(
-            subject="PP Explorer — Password Reset",
-            recipients=[email],
-            html=f"""
-            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;">
-                <div style="background: #0c1a0e; padding: 20px; border-radius: 12px 12px 0 0;">
-                    <h1 style="color: white; margin: 0;">🌿 PP Explorer</h1>
-                    <p style="color: #ffffff80; margin: 5px 0 0;">Pollachi & Palani Tourism</p>
-                </div>
-                <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 12px 12px;">
-                    <h2 style="color: #1a1a1a;">Reset Your Password</h2>
-                    <p style="color: #555;">Hi {user.name},</p>
-                    <p style="color: #555;">Click the button below to reset your password. This link expires in 1 hour.</p>
-                    <a href="{reset_link}"
-                       style="display: inline-block; background: #16a34a; color: white;
-                              padding: 12px 28px; border-radius: 8px; text-decoration: none;
-                              font-weight: bold; margin: 20px 0;">
-                        Reset Password →
-                    </a>
-                    <p style="color: #999; font-size: 12px;">If you didn't request this, ignore this email.</p>
-                </div>
+        html_content = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto;">
+            <div style="background: #0c1a0e; padding: 20px; border-radius: 12px 12px 0 0;">
+                <h1 style="color: white;">🌿 PP Explorer</h1>
+                <p style="color: #ffffff80;">Pollachi & Palani Tourism</p>
             </div>
-            """
+            <div style="background: #f9f9f9; padding: 30px;">
+                <h2>Reset Your Password</h2>
+                <p>Hi {user.name},</p>
+                <p>Click below to reset your password:</p>
+                <a href="{reset_link}"
+                   style="display:inline-block;background:#16a34a;color:white;
+                          padding:12px 28px;border-radius:8px;text-decoration:none;">
+                    Reset Password →
+                </a>
+            </div>
+        </div>
+        """
+
+        ses.send_email(
+            Source='raamlakshmanan22@gmail.com',
+            Destination={'ToAddresses': [email]},
+            Message={
+                'Subject': {'Data': 'PP Explorer — Password Reset'},
+                'Body': {
+                    'Html': {'Data': html_content}
+                }
+            }
         )
-        mail.send(msg)
 
         return jsonify({"message": "Reset link sent to your email"}), 200
 
     except Exception as e:
         print("❌ Email error:", str(e))
-        return jsonify({"error": str(e)}), 500
-
-@app.route("/api/reset-password", methods=["POST"])
-def reset_password():
-    try:
-        data = request.get_json(force=True)
-        email = data.get("email")
-        token = data.get("token")
-        password = data.get("password")
-
-        print("RESET REQUEST RECEIVED")
-        print("Email:", email)
-        print("Token from request:", token)
-        print("Token stored:", reset_tokens.get(email))
-        print("Password received:", password)
-
-        if reset_tokens.get(email) != token:
-            print("Token mismatch")
-            return jsonify({"error": "Invalid or expired token"}), 400
-
-        user = User.query.filter_by(email=email).first()
-
-        if not user:
-            print("User not found")
-            return jsonify({"error": "User not found"}), 404
-
-        new_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode()
-
-        print("Updating password hash to:", new_hash)
-
-        user.password = new_hash
-        db.session.commit()
-
-        del reset_tokens[email]
-
-        print("Password updated successfully")
-
-        return jsonify({"message": "Password reset successful"}), 200
-
-    except Exception as e:
-        print("RESET ERROR:", e)
         return jsonify({"error": str(e)}), 500
     
 # ---------------- BOOK HOTEL ----------------

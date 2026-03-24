@@ -9,7 +9,8 @@ COPY . .
 
 ENV FLASK_APP=run.py
 ENV FLASK_RUN_HOST=0.0.0.0
+COPY migrate_to_s3.py .
 
 EXPOSE 5000
 
-CMD ["python", "run.py"]
+CMD ["python", "backend/run.py"]
