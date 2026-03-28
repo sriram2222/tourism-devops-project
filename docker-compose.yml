@@ -39,18 +39,18 @@ services:
     volumes:
       - ./backend/uploads:/app/uploads
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: ../docker/frontend.Dockerfile
-    args:
-      NEXT_PUBLIC_API_URL: http://3.109.154.125:5000/api 
-    container_name: tourism-frontend
-    restart: always
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
+  ffrontend:
+  build:
+    context: ./frontend
+    dockerfile: ../docker/frontend.Dockerfile
+    args:   
+      NEXT_PUBLIC_API_URL: http://3.109.154.125:5000/api
+  container_name: tourism-frontend
+  restart: always
+  ports:
+    - "3000:3000"
+  depends_on:
+    - backend
 
 volumes:
   mysql_data:
