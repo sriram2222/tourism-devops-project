@@ -2,8 +2,8 @@ import axios from "axios";
 
 const API_BASE =
   typeof window !== "undefined"
-    ? `${window.location.protocol}//${window.location.hostname}:5000/api`
-    : "http://3.110.88.149:5000/api";
+    ? `${window.location.protocol}//${window.location.hostname}/api`
+    : "http://3.110.88.149/api";
 
 const api = axios.create({ baseURL: API_BASE });
 
