@@ -11,7 +11,6 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-    # ✅ Healthcheck — wait until MySQL is actually ready
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
       interval: 5s
@@ -27,7 +26,6 @@ services:
     restart: always
     ports:
       - "5000:5000"
-    # ✅ Wait until MySQL is healthy before starting backend
     depends_on:
       mysql:
         condition: service_healthy
@@ -40,9 +38,11 @@ services:
       - ./backend/uploads:/app/uploads
 
   frontend:
-    build:
+    build:   # ✅ CORRECT INDENTATION
       context: ./frontend
       dockerfile: ../docker/frontend.Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://3.110.88.149:5000/api
     container_name: tourism-frontend
     restart: always
     ports:
