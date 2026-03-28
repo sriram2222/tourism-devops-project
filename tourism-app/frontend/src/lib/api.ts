@@ -61,11 +61,11 @@ export const uploadApi = {
     form.append("file", file);
     if (placeId)    form.append("place_id",  String(placeId));
     if (isPrimary)  form.append("is_primary", "true");
-    return api.post("/upload", form, {
+    return api.post("/upload/image", form, {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },
-  deleteImage: (imageId: number) => api.delete(`/upload/${imageId}`)
+  deleteImage: (imageId: number) => api.delete(`/upload/delete-image/${imageId}`)
 };
 
 export default api;
