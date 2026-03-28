@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL!;
 
 const api = axios.create({ baseURL: API_BASE });
 
@@ -58,11 +58,11 @@ export const uploadApi = {
     form.append("file", file);
     if (placeId)    form.append("place_id",  String(placeId));
     if (isPrimary)  form.append("is_primary", "true");
-    return api.post("/upload/image", form, {
+    return api.post("/upload", form, {
       headers: { "Content-Type": "multipart/form-data" },
     });
   },
-  deleteImage: (imageId: number) => api.delete(`/upload/image/${imageId}`),
+  deleteImage: (imageId: number) => api.delete(`/upload/${imageId}`)
 };
 
 export default api;
