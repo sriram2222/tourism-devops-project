@@ -1,6 +1,9 @@
 import axios from "axios";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL!;
+const API_BASE =
+  typeof window !== "undefined"
+    ? `${window.location.protocol}//${window.location.hostname}:5000/api`
+    : "http://3.109.154.125:5000/api";
 
 const api = axios.create({ baseURL: API_BASE });
 
