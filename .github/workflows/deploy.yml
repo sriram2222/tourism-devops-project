@@ -27,7 +27,7 @@ jobs:
       run: |
         docker build -t sriram2204/tourism-app-frontend:latest \
                      -t sriram2204/tourism-app-frontend:${TAG} \
-                     --build-arg NEXT_PUBLIC_API_URL=/api \
+                     --build-arg NEXT_PUBLIC_API_URL=http://3.110.88.149/api \
                      -f tourism-app/Docker/frontend.Dockerfile ./tourism-app/frontend
 
     # Build Backend
