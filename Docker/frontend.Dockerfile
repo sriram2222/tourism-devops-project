@@ -5,7 +5,7 @@ COPY package*.json ./
 RUN npm cache clean --force
 RUN npm ci
 COPY . .
-ARG NEXT_PUBLIC_API_URL=/api
+ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
