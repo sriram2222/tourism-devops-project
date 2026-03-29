@@ -49,16 +49,4 @@ jobs:
         docker push sriram2204/tourism-app-backend:latest
         docker push sriram2204/tourism-app-backend:${TAG}
 
-    # ✅ Auto Deploy to EC2
-    - name: Deploy to EC2
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.EC2_HOST }}
-        username: ubuntu
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          cd /home/ubuntu
-          docker compose pull
-          docker compose down
-          docker compose up -d
-          docker ps
+    
