@@ -163,7 +163,7 @@ def upload_image():
         return jsonify({"error": str(e)}), 500
 
 # ---------------- GOOGLE LOGIN ----------------
-@app.route("/google-login", methods=["POST"])
+@app.route("/api/google-login", methods=["POST"])
 def google_login():
     try:
         data  = request.get_json()
@@ -204,7 +204,7 @@ def forgot_password():
         reset_tokens[email] = token
 
         # ✅ Replace with
-        reset_link = f"http://52.66.242.219/reset-password?token={token}&email={email}"
+        reset_link = f"http://35.154.144.183/reset-password?token={token}&email={email}"
 
         msg = Message(
             subject="PP Explorer — Password Reset",
