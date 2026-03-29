@@ -51,3 +51,17 @@ EOF
     Name = "tourism-ubuntu-server"
   }
 }
+
+resource "aws_eip" "tourism_eip" {
+  domain   = "vpc"
+  instance = aws_instance.tourism_server.id
+  tags = {
+    Name = "tourism-elastic-ip"
+  }
+}
+
+output "elastic_ip" {
+  value       = aws_eip.tourism_eip.public_ip
+  description = "Permanent public IP"
+}
+

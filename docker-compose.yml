@@ -44,7 +44,7 @@ services:
     context: ./frontend
     dockerfile: ../docker/frontend.Dockerfile
     args:    
-      NEXT_PUBLIC_API_URL: http://3.110.88.149/api
+      NEXT_PUBLIC_API_URL: http://35.154.144.183/api
   container_name: tourism-frontend
   restart: always
   ports:
