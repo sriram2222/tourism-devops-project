@@ -82,7 +82,7 @@ export default function SearchSection() {
                     if (value.length > 1) {
                       setLoading(true);
                       try {
-                        const res = await fetch(`http://127.0.0.1:5000/api/places?search=${value}`);
+                        const res = await fetch(`/api/places/?search=${value}`);
                         const data = await res.json();
                         setResults(data);
                       } catch { setResults([]); }
