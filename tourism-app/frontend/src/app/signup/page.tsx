@@ -49,7 +49,7 @@ export default function Signup() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      const res = await fetch("http://127.0.0.1:5000/google-login", {
+      const res = await fetch("/api/google-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

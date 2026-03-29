@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required
 from app import db
 from app.models import Gallery
+from app.utils.s3_utils import upload_file_to_s3
 import os, uuid
 
 gallery_bp = Blueprint("gallery", __name__)
@@ -9,6 +10,14 @@ gallery_bp = Blueprint("gallery", __name__)
 def _save_file(file):
     ext      = file.filename.rsplit(".",1)[1].lower()
     filename = f"{uuid.uuid4().hex}.{ext}"
+    
+    # ✅ Try S3 first
+    url = upload_file_to_s3(file, filename)
+    if url:
+        return url
+    
+    # ✅ Fallback to local
+    file.seek(0)
     file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
     return f"/api/uploads/{filename}"
 
@@ -42,11 +51,6 @@ def create_gallery():
 def delete_gallery(item_id):
     item = Gallery.query.get(item_id)
     if not item: return jsonify({"error":"Not found"}), 404
-    try:
-        fname = item.image_url.split("/api/uploads/")[-1]
-        fpath = os.path.join(current_app.config["UPLOAD_FOLDER"], fname)
-        if os.path.exists(fpath): os.remove(fpath)
-    except Exception: pass
     db.session.delete(item); db.session.commit()
     return jsonify({"message":"Deleted"}), 200
 
