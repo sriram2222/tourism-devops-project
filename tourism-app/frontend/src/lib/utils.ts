@@ -8,13 +8,12 @@ export function cn(...inputs: ClassValue[]) {
 export function getImageUrl(path: string | null | undefined): string {
   if (!path) return "/images/placeholder.jpg";
 
-  // ✅ If already full URL (S3 / CloudFront)
+  // ✅ Already full S3 URL
   if (path.startsWith("http")) return path;
 
-  // ✅ If backend still returns /api/uploads (fallback)
-  if (path.startsWith("/api/uploads")) {
-    return `http://35.154.144.183:5000${path}`;
-  }
+  // ✅ Local uploads - use Nginx (no port)
+  if (path.startsWith("/api/uploads")) return path;
+
   return "/images/placeholder.jpg";
 }
 
