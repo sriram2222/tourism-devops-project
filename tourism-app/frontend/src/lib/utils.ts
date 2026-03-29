@@ -11,17 +11,11 @@ export function getImageUrl(path: string | null | undefined): string {
   // ✅ If already full URL (S3 / CloudFront)
   if (path.startsWith("http")) return path;
 
-  // ✅ If already has /api/uploads - return as is
-  if (path.startsWith("/api/uploads")) return path;
-
-  // 🔥 CDN support (future)
-  const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL;
-  if (CDN_URL) {
-    return `${CDN_URL}/${path.replace(/^\/+/, "")}`;
+  // ✅ If backend still returns /api/uploads (fallback)
+  if (path.startsWith("/api/uploads")) {
+    return `http://35.154.144.183:5000${path}`;
   }
-
-  // ⚠️ fallback - just filename
-  return `/api/uploads/${path.replace(/^\/+/, "")}`;
+  return "/images/placeholder.jpg";
 }
 
 export function slugify(text: string): string {
