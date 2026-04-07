@@ -1,27 +1,44 @@
-# 🌿 Pollachi & Palani Tourism Website
+🌿 Pollachi & Palani Tourism
 
-Full-stack tourism website — Next.js 15 + Flask + MySQL
+A full-stack tourism web application for Pollachi & Palani, Tamil Nadu — deployed on AWS with static IP, S3 image storage, and infrastructure managed via Terraform.
 
----
+Live: http://35.154.144.183/
 
-## 📁 Project Structure
+🛠 Tech Stack
+LayerTechnologyFrontendNext.js 15 (TypeScript + Tailwind CSS)BackendPython Flask REST APIDatabaseMySQL 8.0Image StorageAWS S3HostingAWS EC2 (Ubuntu 22.04)Static IPAWS Elastic IP — 35.154.144.183InfrastructureTerraform (IaC)Process ManagerPM2 (Node) + Gunicorn (Flask)Reverse ProxyNginx
 
-```
+🏗 Architecture
+User Browser
+     │
+     ▼
+[ Elastic IP: 35.154.144.183 ]
+     │
+     ▼
+[ Nginx — Reverse Proxy ]
+  ├── /         → Next.js (port 3000)
+  └── /api/*    → Flask via Gunicorn (port 5000)
+                        │
+             ┌──────────┴──────────┐
+             ▼                     ▼
+         MySQL 8.0             AWS S3 Bucket
+      (tourism_db)         (place + gallery images)
+
+📁 Project Structure
 tourism-app/
 ├── frontend/                   ← Next.js 15 (TypeScript + Tailwind)
 │   ├── src/
 │   │   ├── app/                ← Pages (Next.js App Router)
 │   │   │   ├── page.tsx            ← Homepage
-│   │   │   ├── layout.tsx          ← Root layout
-│   │   │   ├── globals.css         ← Global styles
-│   │   │   ├── pollachi/           ← Pollachi destination page
-│   │   │   ├── palani/             ← Palani destination page
-│   │   │   ├── gallery/            ← Photo gallery page
-│   │   │   ├── place/[slug]/       ← Place detail page (dynamic)
+│   │   │   ├── layout.tsx
+│   │   │   ├── globals.css
+│   │   │   ├── pollachi/
+│   │   │   ├── palani/
+│   │   │   ├── gallery/
+│   │   │   ├── place/[slug]/
 │   │   │   └── admin/
-│   │   │       ├── login/          ← Admin login
-│   │   │       └── dashboard/      ← Full CRUD admin panel
-│   │   ├── components/         ← All React components
+│   │   │       ├── login/
+│   │   │       └── dashboard/
+│   │   ├── components/
 │   │   │   ├── Navbar.tsx
 │   │   │   ├── Footer.tsx
 │   │   │   ├── HeroSlider.tsx
@@ -35,14 +52,10 @@ tourism-app/
 │   │   │   ├── MapEmbed.tsx
 │   │   │   └── NearbyPlaces.tsx
 │   │   ├── lib/
-│   │   │   ├── api.ts          ← Axios API client
-│   │   │   └── utils.ts        ← Helper functions
+│   │   │   ├── api.ts
+│   │   │   └── utils.ts
 │   │   └── types/
-│   │       └── index.ts        ← TypeScript interfaces
-│   ├── public/images/          ← ⬅ PUT YOUR PHOTOS HERE
-│   │   ├── hero/               ← slide1.jpg, slide2.jpg, slide3.jpg, slide4.jpg
-│   │   ├── pollachi/           ← pollachi-banner.jpg
-│   │   └── palani/             ← palani-banner.jpg
+│   │       └── index.ts
 │   ├── package.json
 │   ├── tailwind.config.ts
 │   ├── next.config.ts
@@ -50,219 +63,204 @@ tourism-app/
 │
 ├── backend/                    ← Python Flask REST API
 │   ├── app/
-│   │   ├── __init__.py         ← App factory + CORS + JWT
-│   │   ├── config.py           ← All configuration
-│   │   ├── models.py           ← SQLAlchemy models
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── models.py
 │   │   └── routes/
-│   │       ├── auth.py         ← Login, JWT, change password
-│   │       ├── places.py       ← CRUD for places
-│   │       ├── gallery.py      ← Gallery management
-│   │       └── upload.py       ← Image upload/delete
-│   ├── uploads/                ← Uploaded images (auto-created)
-│   ├── run.py                  ← Entry point + DB seed
+│   │       ├── auth.py
+│   │       ├── places.py
+│   │       ├── gallery.py
+│   │       └── upload.py       ← Uploads to AWS S3
+│   ├── run.py
 │   ├── requirements.txt
 │   └── .env
 │
-├── mysql/
-│   └── init.sql                ← Database creation script
-├── start-backend.sh            ← One-command backend start
-├── start-frontend.sh           ← One-command frontend start
+├── terraform/                  ← Infrastructure as Code
+│   ├── main.tf                 ← EC2, S3, Security Groups, Elastic IP
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── terraform.tfvars
+│
+├── nginx/
+│   └── tourism.conf            ← Nginx reverse proxy config
+│
 └── README.md
-```
 
----
+☁️ AWS Infrastructure (Terraform)
+Infrastructure is fully managed via Terraform.
+Resources Provisioned
 
-## ⚡ Quick Start
+EC2 Instance — t2.micro (Ubuntu 22.04 LTS) in ap-south-1 (Mumbai)
+Elastic IP — Static public IP 35.154.144.183 attached to the EC2 instance
+S3 Bucket — Private bucket for all uploaded images (place images + gallery)
+Security Group — Ports 22 (SSH), 80 (HTTP), 443 (HTTPS) open
+IAM Role — EC2 instance profile with S3 read/write access
 
-### Prerequisites
-- WSL2 Ubuntu (or any Linux)
-- Node.js 18+ (install via NVM)
-- Python 3.10+
-- MySQL 8.0
+Deploy Infrastructure
+bashcd terraform
 
-### Step 1 — Install & Start MySQL
+# Initialize Terraform
+terraform init
 
-```bash
-sudo apt update && sudo apt install mysql-server -y
-sudo service mysql start
+# Preview what will be created
+terraform plan
 
-# Set root password
-sudo mysql
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';
-FLUSH PRIVILEGES;
-EXIT;
+# Provision all AWS resources
+terraform apply
 
-# Create database
-mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS tourism_db;"
-```
+# To destroy everything
+terraform destroy
+terraform/main.tf (overview)
+hclprovider "aws" {
+  region = "ap-south-1"
+}
 
-### Step 2 — Start the Backend
+resource "aws_instance" "tourism_server" {
+  ami           = "ami-0f58b397bc5c1f2e8"   # Ubuntu 22.04 LTS
+  instance_type = "t2.micro"
+  key_name      = var.key_name
+  ...
+}
 
-```bash
-bash start-backend.sh
-```
+resource "aws_eip" "tourism_eip" {
+  instance = aws_instance.tourism_server.id
+  domain   = "vpc"
+  # Elastic IP: 35.154.144.183
+}
 
-This will:
-- Create Python virtual environment
-- Install all pip packages
-- Auto-create all database tables
-- Seed 9 places (Pollachi + Palani) + admin user
-- Start Flask on **http://localhost:5000**
+resource "aws_s3_bucket" "tourism_images" {
+  bucket = "pollachi-palani-tourism-images"
+}
 
-Test: http://localhost:5000/api/health
+📸 Image Storage — AWS S3
+All images (place photos and gallery uploads) are stored in an AWS S3 bucket, not on the server disk.
+TypeStorageHero / banner imagess3://pollachi-palani-tourism-images/hero/Place imagess3://pollachi-palani-tourism-images/places/Gallery imagess3://pollachi-palani-tourism-images/gallery/
+Images are served via S3 public URLs or optionally through CloudFront CDN.
+Upload Flow (Admin Panel)
 
-### Step 3 — Start the Frontend (new terminal)
+Admin selects image in Dashboard
+Flask backend receives the file
+File is uploaded directly to S3 using boto3
+S3 URL is saved to MySQL
+Frontend loads images directly from S3
 
-```bash
-bash start-frontend.sh
-```
 
-This will:
-- Install Node.js packages (first time: 2–3 mins)
-- Start Next.js on **http://localhost:3000**
+🚀 Deployment on EC2
+One-time Server Setup (after terraform apply)
+bash# SSH into the EC2 instance
+ssh -i your-key.pem ubuntu@35.154.144.183
 
----
+# Install dependencies
+sudo apt update && sudo apt install -y nginx mysql-server python3-pip nodejs npm
 
-## 📸 Adding Your Images
+# Install PM2 globally
+sudo npm install -g pm2
 
-### Banner / Hero Images (for the website design)
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/tourism-app.git
+cd tourism-app
+Backend Setup (Flask + Gunicorn)
+bashcd backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 
-Place photos in `frontend/public/images/`:
+# Configure environment
+cp .env.example .env
+nano .env   # Fill in DB credentials, AWS keys, S3 bucket name
 
-```
-frontend/public/images/
-├── hero/
-│   ├── slide1.jpg        ← Homepage hero — any Pollachi landscape
-│   ├── slide2.jpg        ← Waterfall / Monkey Falls
-│   ├── slide3.jpg        ← Palani temple
-│   └── slide4.jpg        ← Valparai / hill station
-├── pollachi/
-│   └── pollachi-banner.jpg   ← Large card on homepage
-└── palani/
-    └── palani-banner.jpg     ← Large card on homepage
-```
+# Seed database
+python run.py --seed
 
-Recommended size: **1920×1080px JPG** for hero, **1400×800px** for banners
+# Start with Gunicorn (production)
+gunicorn -w 4 -b 127.0.0.1:5000 "app:create_app()"
+Frontend Setup (Next.js + PM2)
+bashcd frontend
+npm install
+cp .env.local.example .env.local
+nano .env.local   # Set NEXT_PUBLIC_API_URL=http://35.154.144.183/api
 
-The site uses a beautiful color gradient as fallback if images are not present.
+# Build for production
+npm run build
 
-### 🔒 Admin Panel (Restricted Access)
+# Start with PM2
+pm2 start npm --name "tourism-frontend" -- start
+pm2 save
+pm2 startup
+Nginx Config
+nginx# /etc/nginx/sites-available/tourism
+server {
+    listen 80;
+    server_name 35.154.144.183;
 
-1. Open: http://localhost:3000/admin/login
-2. Login using **secure admin credentials (only project owner)**
-3. After login → go to **Admin Dashboard**
-4. Manage places, gallery images and content
-5. Uploaded images reflect instantly on website
+    location /api/ {
+        proxy_pass http://127.0.0.1:5000/api/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
 
-⚠️ **Security Note:**
-Admin credentials are **private** and accessible only to the project owner.
-Public users cannot access or modify admin data.
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+bashsudo ln -s /etc/nginx/sites-available/tourism /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
 
-### Gallery Images
-
-1. In Admin Panel, click "Gallery"
-2. Choose a file, add title and tag
-3. Click "Upload Image"
-4. Done by admin alone
-
----
-
-## 🔐 Admin Panel Features
-
-| Feature | Description |
-|---------|-------------|
-| Dashboard | Stats overview + quick actions |
-| All Places | Table with Edit/Delete buttons |
-| Add Place | Form with image upload |
-| Edit Place | Pre-filled form, update any field |
-| Gallery Manager | Upload/delete gallery images |
-| Dark Mode | Toggle in navbar |
-
----
-
-## 🌐 All Pages
-
-| URL | Description |
-|-----|-------------|
-| `/` | Homepage with hero slider, stats, region cards, featured places, gallery |
-| `/pollachi` | Pollachi page — facts, places grid, map, nearby |
-| `/palani` | Palani page — temple info, places grid, map, nearby |
-| `/gallery` | Full photo gallery with filters + lightbox |
-| `/place/[slug]` | Individual place detail with image slider |
-| `/admin/login` | Admin login |
-| `/admin/dashboard` | Full CRUD management panel |
-
----
-
-## 🔧 Configuration
-
-### Frontend `frontend/.env.local`
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
-NEXT_PUBLIC_GOOGLE_MAPS_KEY=    # Optional: add for interactive maps
-```
-
-### Backend `backend/.env`
-```env
-DB_HOST=localhost
+⚙️ Configuration
+Frontend — frontend/.env.local
+envNEXT_PUBLIC_API_URL=http://35.154.144.183/api
+NEXT_PUBLIC_GOOGLE_MAPS_KEY=        # Optional
+Backend — backend/.env
+envDB_HOST=localhost
 DB_PORT=3306
 DB_NAME=tourism_db
 DB_USER=root
-DB_PASSWORD=root
+DB_PASSWORD=your_password
 
 SECRET_KEY=change-this-in-production
 JWT_SECRET_KEY=change-this-in-production
 
-FRONTEND_URL=http://localhost:3000
-```
+FRONTEND_URL=http://35.154.144.183
 
----
+# AWS S3
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_REGION=ap-south-1
+S3_BUCKET_NAME=pollachi-palani-tourism-images
 
-## 🛠️ API Reference
+🌐 All Pages
+URLDescription/Homepage — hero slider, stats, region cards, featured places, gallery/pollachiPollachi page — places, facts, map/palaniPalani page — temple info, places, map/galleryFull photo gallery with filters + lightbox/place/[slug]Individual place detail with image slider/admin/loginAdmin login (restricted)/admin/dashboardFull CRUD panel — places & gallery
 
-| Method | Endpoint | Auth | Description |
-|--------|----------|------|-------------|
-| GET | `/api/health` | — | Health check |
-| POST | `/api/auth/login` | — | Admin login → JWT |
-| GET | `/api/auth/me` | ✅ | Get current admin |
-| GET | `/api/places/` | — | All places (supports `?region=pollachi`, `?featured=true`, `?category=nature`) |
-| GET | `/api/places/{slug}` | — | Single place |
-| POST | `/api/places/` | ✅ | Create place |
-| PUT | `/api/places/{id}` | ✅ | Update place |
-| DELETE | `/api/places/{id}` | ✅ | Delete place |
-| GET | `/api/gallery/` | — | Gallery images |
-| POST | `/api/gallery/` | ✅ | Upload gallery image |
-| DELETE | `/api/gallery/{id}` | ✅ | Delete gallery image |
-| POST | `/api/upload/image` | ✅ | Upload place image |
-| DELETE | `/api/upload/image/{id}` | ✅ | Delete place image |
+🔒 Admin Panel
+URLhttp://35.154.144.183/admin/loginAccessProject owner onlyFeaturesAdd / Edit / Delete places, Upload gallery images to S3AuthJWT token-based authentication
 
----
+🛡️ API Reference
+MethodEndpointAuthDescriptionGET/api/health—Health checkPOST/api/auth/login—Admin login → JWTGET/api/auth/me✅Current admin infoGET/api/places/—All places (filter by region, category, featured)GET/api/places/{slug}—Single place detailPOST/api/places/✅Create placePUT/api/places/{id}✅Update placeDELETE/api/places/{id}✅Delete placeGET/api/gallery/—Gallery imagesPOST/api/gallery/✅Upload image to S3DELETE/api/gallery/{id}✅Delete image from S3POST/api/upload/image✅Upload place image to S3DELETE/api/upload/image/{id}✅Delete place image from S3
 
-## 🐛 Troubleshooting
+🐛 Troubleshooting
+EC2 instance not reachable?
+bash# Check security group allows port 80
+# Verify Nginx is running
+sudo systemctl status nginx
+Frontend not starting?
+bashpm2 logs tourism-frontend
+pm2 restart tourism-frontend
+S3 upload failing?
+bash# Confirm IAM role has S3 permissions
+# Check AWS credentials in backend/.env
+aws s3 ls s3://pollachi-palani-tourism-images/
+MySQL connection error?
+bashsudo systemctl status mysql
+mysql -u root -p -e "SHOW DATABASES;"
+Redeploy after code changes?
+bashcd tourism-app && git pull
+cd frontend && npm run build && pm2 restart tourism-frontend
+cd ../backend && source venv/bin/activate && pm2 restart tourism-backend
 
-**MySQL won't connect:**
-```bash
-sudo service mysql start
-mysql -u root -proot -e "SHOW DATABASES;"
-```
+📌 Live Details
+ItemValueLive URLhttp://35.154.144.183/Elastic IP35.154.144.183AWS Regionap-south-1 (Mumbai)EC2 Typet2.microS3 Bucketpollachi-palani-tourism-images
 
-**Port already in use:**
-```bash
-# Kill port 3000
-npx kill-port 3000
-
-# Kill port 5000  
-kill $(lsof -t -i:5000)
-```
-
-**Images not showing:**
-- For hero/banner images: make sure they are in `frontend/public/images/` with exact filenames
-- For place images: upload via Admin Panel (stored in `backend/uploads/`)
-
-**CORS errors:**
-- Ensure backend is running on port 5000
-- Ensure `FRONTEND_URL=http://localhost:3000` in `backend/.env`
-
----
-
-*Built with ❤️ — Pollachi & Palani Tourism · Tamil Nadu*
+Built with ❤️ — Pollachi & Palani Tourism · Tamil Nadu 🌿
